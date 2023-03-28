@@ -1,11 +1,13 @@
-const { nanoid } = require("nanoid");
-const books = require("./books");
+const { nanoid } = require('nanoid');
+const books = require('./books');
 
 // ADD
 const addBookHandler = (request, h) => {
-  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, reading,
+  } = request.payload;
 
-  if(name == undefined) {
+  if (name === undefined) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal menambahkan buku. Mohon isi nama buku',
@@ -14,7 +16,7 @@ const addBookHandler = (request, h) => {
     return response;
   }
 
-  if(readPage > pageCount) {
+  if (readPage > pageCount) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
@@ -29,14 +31,25 @@ const addBookHandler = (request, h) => {
   const updatedAt = insertedAt;
 
   const newBook = {
-    id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt
-  }
+    id,
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    finished,
+    insertedAt,
+    updatedAt,
+  };
 
   books.push(newBook);
 
   const isSuccess = books.filter((book) => book.id === id).length > 0;
 
-  if(isSuccess) {
+  if (isSuccess) {
     const response = h.response({
       status: 'success',
       message: 'Buku berhasil ditambahkan',
@@ -54,30 +67,31 @@ const addBookHandler = (request, h) => {
   });
   response.code(500);
   return response;
-}
+};
 
 // GET ALL
 const getAllBooksHandler = (request, h) => {
   const { name, reading, finished } = request.query;
 
-  let filteredBooks = books;
+  let matchedBooks = books;
   
-  if(name !== undefined) {
-    filteredBooks = filteredBooks.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()));
+  if (name !== undefined) {
+    matchedBooks = matchedBooks.filter((book) => book.name.toLowerCase()
+      .includes(name.toLowerCase()));
   }
 
-  if(reading !== undefined) {
-    filteredBooks = filteredBooks.filter((book) => Number(book.reading) === Number(reading));
+  if (reading !== undefined) {
+    matchedBooks = matchedBooks.filter((book) => Number(book.reading) === Number(reading));
   }
 
-  if(finished !== undefined) {
-    filteredBooks = filteredBooks.filter((book) => Number(book.finished) === Number(finished));
+  if (finished !== undefined) {
+    matchedBooks = matchedBooks.filter((book) => Number(book.finished) === Number(finished));
   }
 
   const response = h.response({
     status: 'success',
     data: {
-      books: filteredBooks.map((book) => ({
+      books: matchedBooks.map((book) => ({
         id: book.id,
         name: book.name,
         publisher: book.publisher,
@@ -115,9 +129,11 @@ const getBookByIdHandler = (request, h) => {
 const editBookByIdHandler = (request, h) => {
   const { bookId } = request.params;
  
-  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, reading,
+  } = request.payload;
 
-  if(name == undefined) {
+  if (name === undefined) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal memperbarui buku. Mohon isi nama buku',
@@ -126,7 +142,7 @@ const editBookByIdHandler = (request, h) => {
     return response;
   }
 
-  if(readPage > pageCount) {
+  if (readPage > pageCount) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
@@ -143,8 +159,8 @@ const editBookByIdHandler = (request, h) => {
     books[index] = {
       ...books[index],
       name,
-      year, 
-      author, 
+      year,
+      author,
       summary,
       publisher,
       pageCount,
@@ -193,4 +209,10 @@ const deleteBookByIdHandler = (request, h) => {
   return response;
 };
 
-module.exports = { addBookHandler, getAllBooksHandler, getBookByIdHandler, editBookByIdHandler, deleteBookByIdHandler }
+module.exports = {
+  addBookHandler,
+  getAllBooksHandler,
+  getBookByIdHandler,
+  editBookByIdHandler,
+  deleteBookByIdHandler,
+};
